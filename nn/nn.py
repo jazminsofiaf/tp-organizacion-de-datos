@@ -1,13 +1,13 @@
 import numpy as np
 
-np.random.seed(1)
+#np.random.seed(1)
 
 def layer_sizes(X, Y):
     """
     Arguments:
     X -- input dataset of shape (input size, number of examples)
     Y -- labels of shape (output size, number of examples)
-    
+
     Returns:
     n_x -- the size of the input layer
     n_h -- the size of the hidden layer
@@ -24,7 +24,7 @@ def initialize_parameters(n_x, n_h, n_y):
     n_x -- size of the input layer
     n_h -- size of the hidden layer
     n_y -- size of the output layer
-    
+
   Returns:
     W1 -- weight matrix of shape (n_h, n_x)
     b1 -- bias vector of shape (n_h, 1)
@@ -40,7 +40,7 @@ def initialize_parameters(n_x, n_h, n_y):
                   "b1": b1,
                   "W2": W2,
                   "b2": b2}
-    
+
   return parameters
 
 def sigmoid(z):
@@ -54,7 +54,7 @@ def forward_propagation(X, parameters):
     Argument:
     X -- input data of size (n_x, m)
     parameters -- python dictionary containing your parameters (output of initialization function)
-    
+
     Returns:
     A2 -- The sigmoid output of the second activation
     cache -- a dictionary containing "Z1", "A1", "Z2" and "A2"
@@ -65,51 +65,50 @@ def forward_propagation(X, parameters):
     b2 = parameters["b2"]
 
     Z1 = np.dot(W1, X) + b1
-    A1 = np.maximum(Z1,0)
+    A1 = relu(Z1)
     Z2 = np.dot(W2, A1) + b2
-    A2 = sigmoid(Z2)
-    #A2 = Z2
+    #A2 = sigmoid(Z2)
+    A2 = Z2
     cache = {"Z1": Z1,
              "A1": A1,
              "Z2": Z2,
              "A2": A2}
-    
+
     return A2, cache
 
 def compute_cost(A2, Y, parameters):
     """
     Computes the cross-entropy cost
-    
+
     Arguments:
     A2 -- The output of the second activation, of shape (1, number of examples)
     Y -- "true" labels vector of shape (1, number of examples)
     parameters -- python dictionary containing your parameters W1, b1, W2 and b2
-    
+
     Returns:
     cost -- cross-entropy cost given equation (13)
     """
-    
+
     m = Y.shape[1]
 
-    #logprobs = np.multiply(np.log(A2), Y) + np.multiply(np.log(1 - A2), 1 - Y) 
+    #logprobs = np.multiply(np.log(A2), Y) + np.multiply(np.log(1 - A2), 1 - Y)
     #cost = - (1/m) * np.sum(logprobs)
     #cost = np.squeeze(cost)
-    
+
     cost = Y - A2
     cost = np.square(cost).mean()
-    print(cost)
     return cost #me esta dando siempre igual
-  
+
 def backward_propagation(parameters, cache, X, Y):
     """
     Implement the backward propagation using the instructions above.
-    
+
     Arguments:
-    parameters -- python dictionary containing our parameters 
+    parameters -- python dictionary containing our parameters
     cache -- a dictionary containing "Z1", "A1", "Z2" and "A2".
     X -- input data of shape (2, number of examples)
     Y -- "true" labels vector of shape (1, number of examples)
-    
+
     Returns:
     grads -- python dictionary containing your gradients with respect to different parameters
     """
@@ -118,7 +117,7 @@ def backward_propagation(parameters, cache, X, Y):
     W2 = parameters["W2"]
     A1 = cache["A1"]
     A2 = cache["A2"]
-    
+
     dZ2 = A2 - Y
     dW2 = (1/m) * np.dot(dZ2, A1.T)
     db2 = (1/m) * np.sum(dZ2, axis=1, keepdims=True)
@@ -126,24 +125,24 @@ def backward_propagation(parameters, cache, X, Y):
     dZ1 = np.dot(W2.T,dZ2)*(1.*(cache["Z1"]>0))
     dW1 = (1/m) * np.dot(dZ1, X.T)
     db1 = (1/m) * np.sum(dZ1, axis=1, keepdims=True)
-    
+
     grads = {"dW1": dW1,
              "db1": db1,
              "dW2": dW2,
              "db2": db2}
-    
+
     return grads
-  
+
 def update_parameters(parameters, grads, learning_rate = 1.2):
     """
     Updates parameters using the gradient descent update rule given above
-    
+
     Arguments:
-    parameters -- python dictionary containing your parameters 
-    grads -- python dictionary containing your gradients 
-    
+    parameters -- python dictionary containing your parameters
+    grads -- python dictionary containing your gradients
+
     Returns:
-    parameters -- python dictionary containing your updated parameters 
+    parameters -- python dictionary containing your updated parameters
     """
     W1 = parameters["W1"]
     b1 = parameters["b1"]
@@ -158,15 +157,15 @@ def update_parameters(parameters, grads, learning_rate = 1.2):
     W2 = W2 - learning_rate * dW2
     b2 = b2 - learning_rate * db2
     #print(b2)
-    
+
     parameters = {"W1": W1,
                   "b1": b1,
                   "W2": W2,
                   "b2": b2}
-    
+
     return parameters
-  
-def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=False):
+
+def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True):
     """
     Arguments:
     X -- dataset of shape (2, number of examples)
@@ -174,29 +173,29 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=False):
     n_h -- size of the hidden layer
     num_iterations -- Number of iterations in gradient descent loop
     print_cost -- if True, print the cost every 1000 iterations
-    
+
     Returns:
     parameters -- parameters learnt by the model. They can then be used to predict.
     """
-    
+
     np.random.seed(3)
     n_x = layer_sizes(X, Y)[0]
     n_y = layer_sizes(X, Y)[2]
-    
+
     parameters = initialize_parameters(n_x, n_h, n_y)
     W1 = parameters["W1"]
     b1 = parameters["b1"]
     W2 = parameters["W2"]
     b2 = parameters["b2"]
-    
+
     # Loop (gradient descent)
     for i in range(0, num_iterations):
         A2, cache = forward_propagation(X, parameters)
         cost = compute_cost(A2, Y, parameters)
         grads = backward_propagation(parameters, cache, X, Y)
-        #parameters = update_parameters(parameters, grads)
-        W1, b1, W2, b2 = update_parameters(parameters, grads)
-        
+        parameters = update_parameters(parameters, grads)
+        #W1, b1, W2, b2 = update_parameters(parameters, grads)
+
         # Print the cost every 1000 iterations
         if print_cost and i % 1000 == 0:
             print ("Cost after iteration %i: %f" %(i, cost))
@@ -206,20 +205,20 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=False):
 def predict(parameters, X):
     """
     Using the learned parameters, predicts a class for each example in X
-    
+
     Arguments:
-    parameters -- python dictionary containing your parameters 
+    parameters -- python dictionary containing your parameters
     X -- input data of size (n_x, m)
-    
+
     Returns
     predictions -- vector of predictions of our model (red: 0 / blue: 1)
     """
-    
+
     # Computes probabilities using forward propagation, and classifies to 0/1 using 0.5 as the threshold.
     A2, cache = forward_propagation(X, parameters)
     #predictions = np.where(A2 > 0.5, 1, 0)
     predictions = A2
-    
+
     return predictions
 
 
@@ -231,4 +230,3 @@ def test_hidden_layers(X, Y):
     predictions = predict(parameters, X)
     accuracy = float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size))
     print ("Accuracy for {} hidden units: {} %".format(n_h, accuracy))
-  
