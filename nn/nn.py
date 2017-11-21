@@ -165,7 +165,7 @@ def update_parameters(parameters, grads, learning_rate = 1.2):
 
     return parameters
 
-def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True):
+def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None):
     """
     Arguments:
     X -- dataset of shape (2, number of examples)
@@ -182,7 +182,8 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True):
     n_x = layer_sizes(X, Y)[0]
     n_y = layer_sizes(X, Y)[2]
 
-    parameters = initialize_parameters(n_x, n_h, n_y)
+    if not parameters:
+        parameters = initialize_parameters(n_x, n_h, n_y)
     W1 = parameters["W1"]
     b1 = parameters["b1"]
     W2 = parameters["W2"]
@@ -202,7 +203,7 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True):
 
     return parameters
 
-def predict(parameters, X):
+def predict(parameters, X, pricestd, pricemean):
     """
     Using the learned parameters, predicts a class for each example in X
 
@@ -211,22 +212,24 @@ def predict(parameters, X):
     X -- input data of size (n_x, m)
 
     Returns
-    predictions -- vector of predictions of our model (red: 0 / blue: 1)
+    predictions -- vector of predictions of our model
     """
 
-    # Computes probabilities using forward propagation, and classifies to 0/1 using 0.5 as the threshold.
+    # Computes probabilities using forward propagation.
     A2, cache = forward_propagation(X, parameters)
     #predictions = np.where(A2 > 0.5, 1, 0)
-    predictions = A2
+    predictions = A2 * pricestd + pricemean
 
-    return predictions
+    #return predictions
+    return relu(predictions)
 
 
 hidden_layer_sizes = [1, 2, 3, 4, 5, 20, 50]
-def test_hidden_layers(X, Y):
+def test_hidden_layers(X, Y, validation, labels):
   for i, n_h in enumerate(hidden_layer_sizes):
     parameters = nn_model(X, Y, n_h, num_iterations = 5000)
     #plot_decision_boundary(lambda x: predict(parameters, x.T), X, Y)
-    predictions = predict(parameters, X)
-    accuracy = float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size))
-    print ("Accuracy for {} hidden units: {} %".format(n_h, accuracy))
+    predictions = predict(parameters, validation, Y.std(), Y.mean())
+    mse = np.square(labels - predictions).mean()
+    #accuracy = float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size))
+    print ("Accuracy for {} hidden units: {}".format(n_h, mse))
