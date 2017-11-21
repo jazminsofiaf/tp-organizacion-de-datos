@@ -1,0 +1,111 @@
+learning rate: 0.1
+Cost after iteration 0: 1.097180
+Cost after iteration 1000: 0.325111
+Cost after iteration 2000: 0.249851
+Cost after iteration 3000: 0.241142
+Cost after iteration 4000: 0.239986
+params found
+predict:  [[ 160375.44546025]
+ [ 277636.87949137]
+ [  87639.92632936]
+ ..., 
+ [ 108216.89397335]
+ [ 113457.74496901]
+ [ 133246.60910641]]
+real:  [[ 147000.  ]
+ [ 185000.  ]
+ [  56000.  ]
+ ..., 
+ [  87746.83]
+ [  93500.  ]
+ [ 131200.  ]]
+115226080696.0
+learning rate: 0.3
+Cost after iteration 0: 1.118127
+Cost after iteration 1000: 0.311420
+Cost after iteration 2000: 0.290262
+Cost after iteration 3000: 0.285921
+Cost after iteration 4000: 0.284141
+params found
+predict:  [[ 229008.79104427]
+ [ 339686.57243109]
+ [ 197560.20634217]
+ ..., 
+ [ 178694.3682379 ]
+ [ 197418.54730261]
+ [ 348494.66420192]]
+real:  [[ 147000.]
+ [ 185000.]
+ [ 199000.]
+ ..., 
+ [  89500.]
+ [ 130200.]
+ [ 452100.]]
+102509014319.0
+learning rate: 0.5
+Cost after iteration 0: 1.118127
+Cost after iteration 1000: 0.347870
+Cost after iteration 2000: 0.335619
+Cost after iteration 3000: 0.334272
+Cost after iteration 4000: 0.332449
+params found
+predict:  [[ 141531.8364613 ]
+ [ 228186.72714266]
+ [ 121805.66466421]
+ ..., 
+ [ 103707.72727919]
+ [ 124376.03801094]
+ [ 252339.34712803]]
+real:  [[ 147000.]
+ [ 185000.]
+ [ 199000.]
+ ..., 
+ [  89500.]
+ [ 130200.]
+ [ 452100.]]
+96870818025.4
+learning rate: 0.7
+Cost after iteration 0: 1.118127
+Cost after iteration 1000: 0.394823
+Cost after iteration 2000: 0.373000
+Cost after iteration 3000: 0.378512
+Cost after iteration 4000: 0.357662
+params found
+predict:  [[ 112235.40755315]
+ [ 171664.87180305]
+ [ 108637.95609206]
+ ..., 
+ [  79610.34888861]
+ [ 107920.5701094 ]
+ [ 213654.85521827]]
+real:  [[ 147000.]
+ [ 185000.]
+ [ 199000.]
+ ..., 
+ [  89500.]
+ [ 130200.]
+ [ 452100.]]
+96806381267.7
+learning rate: 0.9
+Cost after iteration 0: 1.118127
+Cost after iteration 1000: 0.494184
+Cost after iteration 2000: 0.485320
+Cost after iteration 3000: 0.446301
+Cost after iteration 4000: 0.433324
+params found
+predict:  [[ 262307.17090297]
+ [ 365002.41176605]
+ [ 258337.66350963]
+ ..., 
+ [ 232219.2122218 ]
+ [ 256039.49674238]
+ [ 341885.93571562]]
+real:  [[ 147000.]
+ [ 185000.]
+ [ 199000.]
+ ..., 
+ [  89500.]
+ [ 130200.]
+ [ 452100.]]
+105804895658.0
+

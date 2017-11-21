@@ -165,7 +165,7 @@ def update_parameters(parameters, grads, learning_rate = 1.2):
 
     return parameters
 
-def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None):
+def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None, learning_rate=None):
     """
     Arguments:
     X -- dataset of shape (2, number of examples)
@@ -194,7 +194,10 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None
         A2, cache = forward_propagation(X, parameters)
         cost = compute_cost(A2, Y, parameters)
         grads = backward_propagation(parameters, cache, X, Y)
-        parameters = update_parameters(parameters, grads)
+        if learning_rate:
+            parameters = update_parameters(parameters, grads, learning_rate)
+        else:
+            parameters = update_parameters(parameters, grads)
         #W1, b1, W2, b2 = update_parameters(parameters, grads)
 
         # Print the cost every 1000 iterations
@@ -214,14 +217,10 @@ def predict(parameters, X, pricestd, pricemean):
     Returns
     predictions -- vector of predictions of our model
     """
-
     # Computes probabilities using forward propagation.
     A2, cache = forward_propagation(X, parameters)
-    #predictions = np.where(A2 > 0.5, 1, 0)
-    predictions = A2 * pricestd + pricemean
-
-    #return predictions
-    return relu(predictions)
+    predictions = relu(A2) * pricestd + pricemean
+    return predictions
 
 
 hidden_layer_sizes = [1, 2, 3, 4, 5, 20, 50]
