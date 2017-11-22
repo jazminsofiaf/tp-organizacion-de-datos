@@ -2,8 +2,8 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 
-df_to_predict= pd.read_csv('../tp1/data_filled_ready_to_predict.csv',encoding='UTF-8')
-df= pd.read_csv('../tp1/data_filled_ready_to_train.csv',encoding='UTF-8')
+df_to_predict= pd.read_csv('../tp2/data_filled_ready_to_predict2.csv',encoding='UTF-8')
+df= pd.read_csv('../tp2/data_filled_ready_to_train2.csv',encoding='UTF-8')
 
 
 def linear_regression(df_to_predict, X_train, y_train):

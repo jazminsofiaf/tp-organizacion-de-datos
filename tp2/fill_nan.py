@@ -7,26 +7,39 @@ import re
 
 
 
+
 def date_to_float(dt64):
     return (dt64 - np.datetime64('2013-01-01T00:00:00Z')) / np.timedelta64(1, 's')
 
 
 def define_category(d):
     if("picina" in d or "garage" in d):
-        return 75
+        return 0.75
 
     if("pileta" in d or "cochera" in d):
-        return 70
+        return 0.70
 
     if("gimnasio" in d):
-        return 50
+        return 0.50
     
     if("sum" in d):
-        return 30
+        return 0.30
     
     if("reciclar" in d or "refaccionar" in d ):
-        return -70
+        return -0.70
     return 0
+
+propertytype = {}
+propertytype[0] = 0
+propertytype["appartment"] = 1
+propertytype["apartment"] = 1
+propertytype["departamento"] = 1
+propertytype["house"] = 2
+propertytype["casa"] = 2
+propertytype["PH"] = 3
+propertytype["ph"] = 3
+propertytype["store"] = 4
+propertytype["local"] = 4
    
 
 def fill_nan_and_convert_to_float(datos):
@@ -39,8 +52,7 @@ def fill_nan_and_convert_to_float(datos):
     
    
     #tipo de propiedad
-    datos["property_type"] = pd.Categorical(datos.property_type)
-    datos["property_type"] = datos.property_type.cat.codes
+    datos["property_type"] = datos.property_type.map(lambda t: propertytype.get(t))
     
     
     #descripcion
@@ -175,6 +187,7 @@ def guess_neighborhoods(df,  nombre_conj_barios):
 def get_df_properati_to_predict(df):
 
     df.description = df.description.map(lambda d: unificate_description(d))
+    df.place_name = df.place_name.map(lambda p: unificate_description(p))
     
     guess_neighborhoods(df,"Capital Federal")
     guess_neighborhoods(df,"Buenos Aires Interior")
