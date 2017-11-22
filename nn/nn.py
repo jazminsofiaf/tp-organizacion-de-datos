@@ -97,7 +97,7 @@ def compute_cost(A2, Y, parameters):
 
     cost = Y - A2
     cost = np.square(cost).mean()
-    return cost #me esta dando siempre igual
+    return cost 
 
 def backward_propagation(parameters, cache, X, Y):
     """

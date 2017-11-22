@@ -16,8 +16,11 @@ import numpy as np
 def standarize(column):
     return (column - column.mean()) / column.std()
 
-def one_hot_encode(column):
-    return np.eye(column.max()+1)[column.reshape(-1)]
+def one_hot_encode(column, encodesize=None):
+    if encodesize:
+        return np.eye(encodesize)[column.reshape(-1)]
+    else:
+        return np.eye(column.max()+1)[column.reshape(-1)]
 
 def coordenates_encode(lat, lon):
     x = np.cos(lat) * np.cos(lon)
