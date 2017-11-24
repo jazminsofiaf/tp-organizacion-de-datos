@@ -3,7 +3,7 @@ import pandas as pd
 from nn import *
 from standarization import *
 
-def test_states(epochs=5, trainsize=0.8, learning_rate=None):
+def test_states(epochs=5, trainsize=0.8, learning_rate=None, nh=10):
     dataset = pd.read_csv("../data_filled_ready_to_train.csv")
 
     states = dataset.groupby(["state_name"])
@@ -20,21 +20,21 @@ def test_states(epochs=5, trainsize=0.8, learning_rate=None):
         proptypes = one_hot_encode(state[["property_type"]].values - 1, encodesize=6)
         xyz = coordenates_encode(state[["lat"]].values,state[["lon"]].values)
         places = one_hot_encode(state[["place_name"]].values, encodesize=542)
-        #descriptions = state[["description"]]
+        descriptions = standarize(state[["description"]].values)
 
         datastd = unite_subcols(expenses, surfacetotal)
         datastd = unite_subcols(datastd, surfacecovered)
         datastd = unite_subcols(datastd, proptypes)
         datastd = unite_subcols(datastd, places)
         datastd = unite_subcols(datastd, xyz)
-        #datastd = unite_subcols(datastd, descriptions)
+        datastd = unite_subcols(datastd, descriptions)
 
         parameters = None
         for value in range(0,epochs):
             msk = np.random.rand(len(datastd)) < trainsize
             train = datastd[msk]
             test = datastd[~msk]
-            trainprices = pricesstd[msk]
+            trainprices = prices[msk]
             testprices = prices[~msk]
 
             sh = testprices.shape[0]
@@ -42,13 +42,13 @@ def test_states(epochs=5, trainsize=0.8, learning_rate=None):
             sh = trainprices.shape[0]
             trainprices = trainprices.reshape((1,sh))
 
-            parameters = nn_model(train.T, trainprices, 10,num_iterations=5000,
+            parameters = nn_model(train.T, trainprices, nh,num_iterations=1000,
                                 parameters=parameters, learning_rate=learning_rate)
 
             predictions = predict(parameters, test.T, testprices.std(), testprices.mean())
             mse = np.square(testprices.T - predictions).mean()
             print("MSE: %s" % mse)
-        predict_test(g, parameters, prices.std(), prices.mean(),filename=str(g)+'submit.csv')
+        #predict_test(g, parameters, prices.std(), prices.mean(),filename=str(g)+'submit.csv')
 
         #results[g] = {'parameters': parameters, 'pricestd': prices.std(), 'pricemean': prices.mean()}
 
@@ -76,21 +76,23 @@ def predict_test(g, parameters, pricesstd, pricesmean, filename="submit.csv"):
     surfacecovered = standarize(state[["surface_covered_in_m2"]].values)
     proptypes = one_hot_encode(state[["property_type"]].values - 1, encodesize=6)
     xyz = coordenates_encode(state[["lat"]].values,state[["lon"]].values)
-    #descriptions = state[["description"]]
+    descriptions = standarize(state[["description"]].values)
 
     datastd = unite_subcols(expenses, surfacetotal)
     datastd = unite_subcols(datastd, surfacecovered)
     datastd = unite_subcols(datastd, proptypes)
     datastd = unite_subcols(datastd, places)
     datastd = unite_subcols(datastd, xyz)
-    #datastd = unite_subcols(datastd, descriptions)
+    datastd = unite_subcols(datastd, descriptions)
 
     predictions = predict(parameters, datastd.T, pricesstd, pricesmean)
     results = unite_subcols(ids, predictions.T)
     np.savetxt(filename, results, fmt='%i', delimiter=",")
 
 if __name__ == '__main__':
-    results = test_states(learning_rate=.5, epochs=3)
+    for i in [5,10,20,50,100]:
+        print("hidden layer: %i" % i)
+        results = test_states(learning_rate=.5, epochs=3,nh=i)
     #for g in results.keys():
     #    predict_test(results[g]['parameters'],
     #                 results[g]['pricestd'],

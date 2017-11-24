@@ -3,10 +3,10 @@ import numpy as np
 
 #faltan
 # 	created_on
-#place_name
 #floor 	rooms
 
 #ya estan
+#place_name
 #lat 	lon
 #property_type 	state_name
 #surface_total_in_m2 	surface_covered_in_m2

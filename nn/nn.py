@@ -88,16 +88,10 @@ def compute_cost(A2, Y, parameters):
     Returns:
     cost -- cross-entropy cost given equation (13)
     """
-
-    m = Y.shape[1]
-
-    #logprobs = np.multiply(np.log(A2), Y) + np.multiply(np.log(1 - A2), 1 - Y)
-    #cost = - (1/m) * np.sum(logprobs)
-    #cost = np.squeeze(cost)
-
-    cost = Y - A2
+    #estoy probando con precios sin standarization
+    cost = Y - A2#(A2 * Y.std() + Y.mean())
     cost = np.square(cost).mean()
-    return cost 
+    return cost
 
 def backward_propagation(parameters, cache, X, Y):
     """
@@ -165,7 +159,7 @@ def update_parameters(parameters, grads, learning_rate = 1.2):
 
     return parameters
 
-def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None, learning_rate=None):
+def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=False, parameters=None, learning_rate=None):
     """
     Arguments:
     X -- dataset of shape (2, number of examples)
@@ -192,7 +186,6 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None
     # Loop (gradient descent)
     for i in range(0, num_iterations):
         A2, cache = forward_propagation(X, parameters)
-        cost = compute_cost(A2, Y, parameters)
         grads = backward_propagation(parameters, cache, X, Y)
         if learning_rate:
             parameters = update_parameters(parameters, grads, learning_rate)
@@ -202,6 +195,7 @@ def nn_model(X, Y, n_h, num_iterations = 10000, print_cost=True, parameters=None
 
         # Print the cost every 1000 iterations
         if print_cost and i % 1000 == 0:
+            cost = compute_cost(A2, Y, parameters)
             print ("Cost after iteration %i: %f" %(i, cost))
 
     return parameters
@@ -219,7 +213,7 @@ def predict(parameters, X, pricestd, pricemean):
     """
     # Computes probabilities using forward propagation.
     A2, cache = forward_propagation(X, parameters)
-    predictions = relu(A2) * pricestd + pricemean
+    predictions = relu(A2) #* pricestd + pricemean
     return predictions
 
 
@@ -227,8 +221,6 @@ hidden_layer_sizes = [1, 2, 3, 4, 5, 20, 50]
 def test_hidden_layers(X, Y, validation, labels):
   for i, n_h in enumerate(hidden_layer_sizes):
     parameters = nn_model(X, Y, n_h, num_iterations = 5000)
-    #plot_decision_boundary(lambda x: predict(parameters, x.T), X, Y)
     predictions = predict(parameters, validation, Y.std(), Y.mean())
     mse = np.square(labels - predictions).mean()
-    #accuracy = float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size))
     print ("Accuracy for {} hidden units: {}".format(n_h, mse))
